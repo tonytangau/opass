@@ -96,5 +96,18 @@ To run the integration tests for Opass, use the following command:
 npm run test
 ```
 
+## TODO
+
+1. Add refresh token support and `/auth/refresh-token` endpoint
+2. Implement password reset with email integration
+3. Integrate OAuth with:
+   - Microsoft accounts
+   - Google accounts
+4. Enhance role-based access control (RBAC)
+5. Introduce multi-factor authentication (MFA)
+6. Add user profile management endpoints
+7. Implement logging and monitoring for authentication activities
+8. Add rate limiting to prevent brute force attacks
+
 ## License
 This project is open-source and available under the [MIT License](LICENSE).
