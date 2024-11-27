@@ -1,4 +1,4 @@
-import './utils/loadEnv'; 
+import './utils/loadEnv';
 import { app, AppDataSource } from './app';
 import { createDatabaseIfNotExists } from './utils/databaseUtils';
 

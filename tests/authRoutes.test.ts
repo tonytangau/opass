@@ -72,7 +72,8 @@ describe('Auth Routes Integration Tests', () => {
       });
 
     expect(res.statusCode).toEqual(200);
-    expect(res.body).toHaveProperty('token');
+    expect(res.body).toHaveProperty('accessToken');
+    expect(res.body).toHaveProperty('refreshToken');
   });
 
   it('should not allow login with incorrect password', async () => {
@@ -106,5 +107,56 @@ describe('Auth Routes Integration Tests', () => {
 
     expect(res.statusCode).toEqual(400);
     expect(res.body.message).toBe('Invalid email or password');
+  });
+});
+
+describe('Refresh Token Tests', () => {
+  let refreshToken: string;
+
+  beforeEach(async () => {
+    // Register the user first
+    await request(app)
+    .post('/auth/register')
+    .send({
+      email: 'integrationtest@example.com',
+      password: 'password123',
+    });
+  
+    // Login before each test to get a valid refresh token
+    const res = await request(app)
+      .post('/auth/login')
+      .send({
+        email: 'integrationtest@example.com',
+        password: 'password123',
+      });
+
+    refreshToken = res.body.refreshToken;
+  });
+
+  it('should refresh the access token using a valid refresh token', async () => {
+    const res = await request(app)
+      .post('/auth/refresh-token')
+      .send({ refreshToken });
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toHaveProperty('accessToken');
+  });
+
+  it('should not refresh the access token with an invalid refresh token', async () => {
+    const res = await request(app)
+      .post('/auth/refresh-token')
+      .send({ refreshToken: 'invalidrefreshToken' });
+
+    expect(res.statusCode).toEqual(403);
+    expect(res.body.message).toBe('Forbidden: Invalid refresh token');
+  });
+
+  it('should not refresh the access token without a refresh token', async () => {
+    const res = await request(app)
+      .post('/auth/refresh-token')
+      .send({});
+
+    expect(res.statusCode).toEqual(400);
+    expect(res.body.message).toBe('Refresh token is required');
   });
 });
